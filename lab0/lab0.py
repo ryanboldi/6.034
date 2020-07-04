@@ -31,14 +31,28 @@ ANSWER_1 = '2'
 # Problem 2.1: Warm-Up Stretch
 
 def cube(x):
-    raise NotImplementedError
+    return x**3
 
 def factorial(x):
-    raise NotImplementedError
+    if (x < 0):
+        raise Exception ("factorial: input must not be negative")
+    elif (x == 0):
+        return 1
+    elif (x > 0):
+        return x*factorial(x-1)
 
 def count_pattern(pattern, lst):
-    raise NotImplementedError
-
+    count = 0
+    for l in xrange(0 , len(lst)):
+        pat = True #whether there is a pattern starting from this item
+        for p in xrange(0, len(pattern)):
+            if (l + p < len(lst)):
+                if lst[l + p] != pattern[p]:
+                    pat = False
+        if pat:
+            count+=1
+    return count
+                
 
 # Problem 2.2: Expression depth
 
