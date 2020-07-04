@@ -57,8 +57,16 @@ def count_pattern(pattern, lst):
 # Problem 2.2: Expression depth
 
 def depth(expr):
-    raise NotImplementedError
-
+    #loop deeper and deeper until we get to something that isnt a list
+    if(not isinstance(expr, (list, tuple))):
+        return 0
+    else:
+        max_depth = 0
+        for i in expr:
+            if depth(i) > max_depth:
+                max_depth = depth(i)
+        return max_depth + 1
+            
 
 # Problem 2.3: Tree indexing
 
