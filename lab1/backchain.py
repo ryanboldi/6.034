@@ -15,6 +15,13 @@ from zookeeper import ZOOKEEPER_RULES
 
 
 def backchain_to_goal_tree(rules, hypothesis):
+    #check through all the rules, see if their consequents match the hypothesis,
+    #could use match(pattern, datum) to match the rules' consequents (rule.consequent) to one of the hypotheses.
+    #if they do, populate antecedent and add to goal tree
+    #they are either a leaf or a rule expression, 
+    #keep backchaining untill we get a full goal tree
+
+
     raise NotImplementedError
 
 # Here's an example of running the backward chainer - uncomment
