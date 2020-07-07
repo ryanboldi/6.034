@@ -114,9 +114,56 @@ TEST_RESULTS_TRANS2 = forward_chain([transitive_rule],
 # able to refer to the rules by name and easily rearrange them if
 # you need to.
 
+
+same_identity = IF(OR('male (?x)',
+                      'female (?x)'),
+                THEN('same-identity (?x) (?x)'))
+
+sibling_rule = IF(AND('parent (?x) (?y)',
+                      'parent (?x) (?z)',
+                      NOT('same-identity (?y) (?z)')),
+                THEN('sibling (?y) (?z)'))
+
+brother_rule = IF(AND('sibling (?x) (?y)',
+                      'male (?x)'),
+                THEN('brother (?x) (?y)'))
+
+sister_rule = IF(AND('sibling (?x) (?y)',
+                     'female (?x)'),
+                THEN('sister (?x) (?y)'))
+
+mother_rule = IF(AND('parent (?x) (?y)',
+                     'female (?x)'),
+                THEN('mother (?x) (?y)'))
+
+father_rule = IF(AND('parent (?x) (?y)',
+                     'male (?x)'),
+                THEN('father (?x) (?y)'))
+
+son_rule = IF(AND('parent (?x) (?y)',
+                  'male (?y)'),
+                THEN('son (?y) (?x)'))
+
+daughter_rule = IF(AND('parent (?x) (?y)',
+                  'female (?y)'),
+                THEN('daughter (?y) (?x)'))
+
+cousin_rule = IF(AND('parent (?x) (?y)',
+                  'parent (?z) (?w)',
+                  'sibling (?z) (?x)'),
+                THEN('cousin (?y) (?w)'))
+
+grandparent_rule = IF(AND('parent (?x) (?y)',
+                  'parent (?z) (?x)'),
+                THEN('grandparent (?z) (?y)'))
+
+grandchild_rule = IF('grandparent (?x) (?y)',
+                THEN('grandchild (?y) (?x)'))
+
+
 # Then, put them together into a list in order, and call it
 # family_rules.
-family_rules = [ ]                    # fill me in
+family_rules = [same_identity, sibling_rule, brother_rule, sister_rule, father_rule, mother_rule, son_rule, daughter_rule, cousin_rule, grandparent_rule, grandchild_rule]                    # fill me in
 
 # Some examples to try it on:
 # Note: These are used for testing, so DO NOT CHANGE
@@ -136,7 +183,7 @@ simpsons_data = ("male bart",
 TEST_RESULTS_6 = forward_chain(family_rules,
                                simpsons_data,verbose=False)
 # You can test your results by uncommenting this line:
-# print forward_chain(family_rules, simpsons_data, verbose=True)
+#print forward_chain(family_rules, simpsons_data, verbose=True)
 
 black_data = ("male sirius",
               "male regulus",
@@ -169,7 +216,7 @@ black_family_cousins = [
     if "cousin" in x ]
 
 # To see if you found them all, uncomment this line:
-# print black_family_cousins
+#print black_family_cousins
 
 # To debug what happened in your rules, you can set verbose=True
 # in the function call above.
