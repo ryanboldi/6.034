@@ -89,13 +89,13 @@ from algebra_utils import distribution, encode_sumprod, decode_sumprod
 # Please answer these questions inside the double quotes.
 
 # When did you take 6.01?
-WHEN_DID_YOU_TAKE_601 = ""
+WHEN_DID_YOU_TAKE_601 = "2018"
 
 # How many hours did you spend per 6.01 lab?
-HOURS_PER_601_LAB = ""
+HOURS_PER_601_LAB = "2 Hours"
 
 # How well did you learn 6.01?
-HOW_WELL_I_LEARNED_601 = ""
+HOW_WELL_I_LEARNED_601 = "Very Well"
 
 # How many hours did this lab take?
-HOURS = ""
+HOURS = "1.5 Hours"
