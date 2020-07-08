@@ -20,9 +20,32 @@ def backchain_to_goal_tree(rules, hypothesis):
     #if they do, populate antecedent and add to goal tree
     #they are either a leaf or a rule expression, 
     #keep backchaining untill we get a full goal tree
+    goal_tree = OR(hypothesis)
+    #we want a whole nested statement that tells us whether or not the hypothesis is true.
+    for i in rules:
+        for c in i.consequent():
+            matchBinds = match(c, hypothesis) #if the consequent of any of the rules matches
+            if matchBinds != None:
+                #figure out if i's antecedent is AND or OR or none
+                goal_tree.append(populate(i.antecedent(), matchBinds)) #populate all of its antecedents, and add them to our goal tree
 
+    try:
+        goal_tree[1]
+    except IndexError:
+        pass
+        #print "Didn't add anything"
+    else:
+        print(goal_tree)
+        for l in range(1, len(goal_tree)):
+            if (isinstance(goal_tree[l], str)):
+                goal_tree[l] = backchain_to_goal_tree(rules, goal_tree[l])
+            else:
+                for g in range(len(goal_tree[l])):
+                    #check all the rules we just added
+                    #replace the goals with a backchain to goal tree
+                    goal_tree[l][g] = simplify(backchain_to_goal_tree(rules, goal_tree[l][g])) 
 
-    raise NotImplementedError
+    return simplify(goal_tree)
 
 # Here's an example of running the backward chainer - uncomment
 # it to see it work:
