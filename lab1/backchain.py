@@ -35,7 +35,7 @@ def backchain_to_goal_tree(rules, hypothesis):
         pass
         #print "Didn't add anything"
     else:
-        print(goal_tree)
+        #print(goal_tree)
         for l in range(1, len(goal_tree)):
             if (isinstance(goal_tree[l], str)):
                 goal_tree[l] = backchain_to_goal_tree(rules, goal_tree[l])
