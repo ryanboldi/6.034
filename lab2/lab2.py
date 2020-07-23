@@ -116,7 +116,41 @@ def hill_climbing(graph, start, goal):
 ## The k top candidates are to be determined using the 
 ## graph get_heuristic function, with lower values being better values.
 def beam_search(graph, start, goal, beam_width):
-    raise NotImplementedError
+    agenda = [[start]]
+
+    while len(agenda) > 0:
+        paths = {}
+        #go through each level of the agenda, and make sure that there are only k nodes in that level
+        for p in agenda:
+            if str(len(p)) in paths:
+                paths[str(len(p))].append(p)
+            else:
+                paths[str(len(p))] = [p]
+        
+        agenda = []
+        #now we sort every individual path of each length by heuristic
+        for i in sorted(paths):
+            thisLevel = sorted(paths[str(i)], key=lambda path : graph.get_heuristic(path[-1], goal)) #sort all the paths in each level, add to new array
+            thisLevel = thisLevel[0:beam_width] #get rid of all that are not less than beam Width
+            thisLevel = thisLevel[::-1] #reverse before we append to preserve order
+            for i in thisLevel:
+                agenda.append(i)
+
+        #sort agenda again so we always start at the shortest node          
+        #agenda = sorted(agenda, key=lambda path : graph.get_heuristic(path[-1], goal), reverse=True) #sort all the paths in each level, add to new array
+
+        curPath = agenda.pop(0)
+        if (graph.is_valid_path(curPath)):
+            #if the path ends in the goal
+            if (curPath[-1] == goal):
+                return curPath
+            else:
+                for n in graph.get_connected_nodes(curPath[-1]): #for every node the last node connects to,
+                    if (not n in curPath): #no biting our own tail
+                        p = copy.copy(curPath)
+                        p.append(n) #make a new path, the current path + the latest node
+                        agenda.append(p) #add this path to end of agenda
+    return []
 
 ## Now we're going to try optimal search.  The previous searches haven't
 ## used edge distances in the calculation.
