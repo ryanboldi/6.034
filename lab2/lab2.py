@@ -67,7 +67,6 @@ def bfs(graph, start, goal):
 def dfs(graph, start, goal):
     agenda = [[start]]#list of paths
     #for every node that the current node is attached to:
-        #pick first one alphabetically
         #check if goal
         #if not, expand all nodes here, adding them to path
         #move to next node until all nodes in this layer have been expanded.
