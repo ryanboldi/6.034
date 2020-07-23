@@ -43,7 +43,6 @@ import copy
 def bfs(graph, start, goal):
     agenda = [[start]]#list of paths
     #for every node that the current node is attached to:
-        #pick first one alphabetically
         #check if goal
         #if not, expand all nodes here, adding them to path
         #move to next node until all nodes in this layer have been expanded.
@@ -66,7 +65,25 @@ def bfs(graph, start, goal):
 ## Once you have completed the breadth-first search,
 ## this part should be very simple to complete.
 def dfs(graph, start, goal):
-    raise NotImplementedError
+    agenda = [[start]]#list of paths
+    #for every node that the current node is attached to:
+        #pick first one alphabetically
+        #check if goal
+        #if not, expand all nodes here, adding them to path
+        #move to next node until all nodes in this layer have been expanded.
+
+    while len(agenda) > 0:
+        curPath = agenda.pop(-1) #start from the end
+        if (graph.is_valid_path(curPath)):
+            #if the path ends in the goal
+            if (curPath[-1] == goal):
+                return curPath
+            else:
+                for n in graph.get_connected_nodes(curPath[-1]): #for every node the last node connects to,
+                    if (not n in curPath): #no biting our own tail
+                        p = copy.copy(curPath)
+                        p.append(n) #make a new path, the current path + the latest node
+                        agenda.append(p) #add this path to end of agenda
 
 
 ## Now we're going to add some heuristics into the search.  
