@@ -89,7 +89,26 @@ def dfs(graph, start, goal):
 ## Remember that hill-climbing is a modified version of depth-first search.
 ## Search direction should be towards lower heuristic values to the goal.
 def hill_climbing(graph, start, goal):
-    raise NotImplementedError
+    #same as dfs, but we sort each path by the heuristic of the end node.
+    #WITH BACKTRACKING SO WE DON'T WANT TO GET RID OF THE AGENDA EVERYTIME
+    agenda = [[start]]
+    
+    while len(agenda) > 0:
+        curPath = agenda.pop(-1) #start from the end
+        if (graph.is_valid_path(curPath)):
+            #if the path ends in the goal
+            if (curPath[-1] == goal):
+                return curPath
+            else:
+                toAppend = []
+                for n in graph.get_connected_nodes(curPath[-1]): #for every node the last node connects to,
+                    if (not n in curPath): #no biting our own tail
+                        p = copy.copy(curPath)
+                        p.append(n) #make a new path, the current path + the latest node
+                        toAppend.append(p) #add this path to end of agenda
+                toAppend = sorted(toAppend, key=lambda path : graph.get_heuristic(path[-1], goal), reverse=True) # sort the agenda by the last item in each path's heuristic to the goal, we reverse, as the "front" of the queue is infact the end of the array.
+                for i in toAppend:
+                    agenda.append(i)
 
 ## Now we're going to implement beam search, a variation on BFS
 ## that caps the amount of memory used to store paths.  Remember,
