@@ -7,32 +7,33 @@
 
 # 1: True or false - Hill Climbing search is guaranteed to find a solution
 #    if there is a solution
-ANSWER1 = None
+ANSWER1 = False
 
 # 2: True or false - Best-first search will give an optimal search result
 #    (shortest path length).
 #    (If you don't know what we mean by best-first search, refer to
 #     http://courses.csail.mit.edu/6.034f/ai3/ch4.pdf (page 13 of the pdf).)
-ANSWER2 = None
+ANSWER2 = False
 
 # 3: True or false - Best-first search and hill climbing make use of
 #    heuristic values of nodes.
-ANSWER3 = None
+ANSWER3 = True
 
 # 4: True or false - A* uses an extended-nodes set.
-ANSWER4 = None
+ANSWER4 = True
 
 # 5: True or false - Breadth first search is guaranteed to return a path
 #    with the shortest number of nodes.
-ANSWER5 = None
+ANSWER5 = True
 
 # 6: True or false - The regular branch and bound uses heuristic values
 #    to speed up the search for an optimal path.
-ANSWER6 = None
+ANSWER6 = False
 
 # Import the Graph data structure from 'search.py'
 # Refer to search.py for documentation
 from search import Graph
+import copy
 
 ## Optional Warm-up: BFS and DFS
 # If you implement these, the offline tester will test them.
@@ -40,8 +41,28 @@ from search import Graph
 # The online tester will not test them.
 
 def bfs(graph, start, goal):
-    raise NotImplementedError
+    agenda = [[start]]#list of paths
+    #for every node that the current node is attached to:
+        #pick first one alphabetically
+        #check if goal
+        #if not, expand all nodes here, adding them to path
+        #move to next node until all nodes in this layer have been expanded.
 
+    while len(agenda) > 0:
+        curPath = agenda.pop(0)
+        if (graph.is_valid_path(curPath)):
+            #if the path ends in the goal
+            if (curPath[-1] == goal):
+                return curPath
+            else:
+                for n in graph.get_connected_nodes(curPath[-1]): #for every node the last node connects to,
+                    if (not n in curPath): #no biting our own tail
+                        p = copy.copy(curPath)
+                        p.append(n) #make a new path, the current path + the latest node
+                        agenda.append(p) #add this path to end of agenda
+
+    return []
+    
 ## Once you have completed the breadth-first search,
 ## this part should be very simple to complete.
 def dfs(graph, start, goal):

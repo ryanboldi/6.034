@@ -9,9 +9,9 @@ try:
 except ImportError:
     from StringIO import StringIO
 
-    
+
 # This is a skeleton for what the tester should do. Ideally, this module
-# would be imported in the pset and run as its main function. 
+# would be imported in the pset and run as its main function.
 
 # We need the following rpc functions. (They generally take username and
 # password, but you could adjust this for whatever security system.)
@@ -48,6 +48,7 @@ except ImportError:
 def test_summary(dispindex, ntests):
     return "Test %d/%d" % (dispindex, ntests)
 
+
 def show_result(testsummary, testcode, correct, got, expected, verbosity):
     if correct:
         if verbosity > 0:
@@ -61,6 +62,7 @@ def show_result(testsummary, testcode, correct, got, expected, verbosity):
         print "Got:     ", got
         print "Expected:", expected
 
+
 def show_exception(testsummary, testcode):
     print "%s: Error." % testsummary
     print "While running the following test case:"
@@ -72,7 +74,6 @@ def show_exception(testsummary, testcode):
 
 def get_lab_module():
     lab = None
-
     # Try the easy way first
     try:
         from tests import lab_number
@@ -91,10 +92,10 @@ def get_lab_module():
 
     if not hasattr(lab, "LAB_NUMBER"):
         lab.LAB_NUMBER = labnum
-    
+
     return lab
 
-    
+
 def run_test(test, lab):
     id, type, attr_name, args = test
     attr = getattr(lab, attr_name)
@@ -112,43 +113,46 @@ def test_offline(verbosity=1):
     test_names = list(tests_module.__dict__.keys())
     test_names.sort()
 
-    tests = [ (x[:-8],
-               getattr(tests_module, x),
-               getattr(tests_module, "%s_testanswer" % x[:-8]),
-               getattr(tests_module, "%s_expected" % x[:-8]),
-               "_".join(x[:-8].split('_')[:-1]))
-              for x in test_names if x[-8:] == "_getargs" ]
-    
+    tests = [(x[:-8],
+              getattr(tests_module, x),
+              getattr(tests_module, "%s_testanswer" % x[:-8]),
+              getattr(tests_module, "%s_expected" % x[:-8]),
+              "_".join(x[:-8].split('_')[:-1]))
+             for x in test_names if x[-8:] == "_getargs"]
+
     ntests = len(tests)
     ncorrect = 0
-    
+
     for index, (testname, getargs, testanswer, expected, fn_name) in enumerate(tests):
         dispindex = index+1
         summary = test_summary(dispindex, ntests)
 
         if getargs == 'VALUE':
             type = 'VALUE'
-            getargs = lambda: getattr(get_lab_module(), testname)
+            def getargs(): return getattr(get_lab_module(), testname)
             fn_name = testname
         else:
             type = 'FUNCTION'
-            
+
         try:
             answer = run_test((0, type, fn_name, getargs()), get_lab_module())
             correct = testanswer(answer)
         except Exception:
             show_exception(summary, testname)
             continue
-        
+
         show_result(summary, testname, correct, answer, expected, verbosity)
-        if correct: ncorrect += 1
-    
+        if correct:
+            ncorrect += 1
+
     print "Passed %d of %d tests." % (ncorrect, ntests)
     return ncorrect == ntests
 
+
 def get_target_upload_filedir():
-    cwd = os.getcwd() # Get current directory.  Play nice with Unicode pathnames, just in case.
-        
+    # Get current directory.  Play nice with Unicode pathnames, just in case.
+    cwd = os.getcwd()
+
     print "Please specify the directory containing your lab."
     print "Note that all files from this directory will be uploaded!"
     print "Labs should not contain large amounts of data; very-large"
@@ -165,25 +169,26 @@ def get_target_upload_filedir():
 
     return target_dir
 
+
 def get_tarball_data(target_dir, filename):
     data = StringIO()
     file = tarfile.open(filename, "w|bz2", data)
 
     print "Preparing the lab directory for transmission..."
-            
+
     file.add(target_dir)
-    
+
     print "Done."
     print
     print "The following files have been added:"
-    
+
     for f in file.getmembers():
         print f.name
-            
+
     file.close()
 
     return data.getvalue()
-    
+
 
 def test_online(verbosity=1):
     lab = get_lab_module()
@@ -206,23 +211,25 @@ def test_online(verbosity=1):
             print "Linux Athena computers are known to support HTTPS,"
             print "if you use the version of Python in the 'python' locker."
             sys.exit(0)
-            
+
     ntests = len(tests)
     ncorrect = 0
 
     lab = get_lab_module()
-    
+
     target_dir = get_target_upload_filedir()
 
-    tarball_data = get_tarball_data(target_dir, "lab%s.tar.bz2" % lab.LAB_NUMBER)
-            
+    tarball_data = get_tarball_data(
+        target_dir, "lab%s.tar.bz2" % lab.LAB_NUMBER)
+
     print "Submitting to the 6.034 Webserver..."
 
-    server.submit_code(username, password, lab.__name__, xmlrpclib.Binary(tarball_data))
+    server.submit_code(username, password, lab.__name__,
+                       xmlrpclib.Binary(tarball_data))
 
     print "Done submitting code."
     print "Running test cases..."
-    
+
     for index, testcode in enumerate(tests):
         dispindex = index+1
         summary = test_summary(dispindex, ntests)
@@ -233,16 +240,16 @@ def test_online(verbosity=1):
             show_exception(summary, testcode)
             continue
 
-        correct, expected = server.send_answer(username, password, lab.__name__, testcode[0], answer)
+        correct, expected = server.send_answer(
+            username, password, lab.__name__, testcode[0], answer)
         show_result(summary, testcode, correct, answer, expected, verbosity)
-        if correct: ncorrect += 1
-    
+        if correct:
+            ncorrect += 1
+
     response = server.status(username, password, lab.__name__)
     print response
     print "!! Please note that lab0 has no sever-side test cases."
     print "You receive a 5 if you submit on-time."
-     
-
 
 
 if __name__ == '__main__':
