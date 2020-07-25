@@ -220,7 +220,19 @@ def a_star(graph, start, goal):
 ## consistent, but not admissible?
 
 def is_admissible(graph, goal):
-    raise NotImplementedError
+    #every heuristic value needs to be less than or equal to the distance of the
+    #shortest path from the goal to that node
+    admissible = True
+    for n in graph.nodes:
+        #use branch and bound to find the optimal path
+        accLength = path_length(graph, branch_and_bound(graph, n, goal))
+        heuristic = graph.get_heuristic(n, goal)
+
+        if heuristic > accLength:
+            admissible = False
+    return admissible
+
+
 
 def is_consistent(graph, goal):
     raise NotImplementedError
