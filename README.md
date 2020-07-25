@@ -1,4 +1,4 @@
-# MIT-6.034
+# MIT 6.034
 Files associated with my work on MIT's 6.034 Artificial Intelligence
 My solutions to the problem sets are in their respective "lab" files.
 
