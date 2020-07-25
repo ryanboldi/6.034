@@ -193,7 +193,25 @@ def branch_and_bound(graph, start, goal):
 
 
 def a_star(graph, start, goal):
-    raise NotImplementedError
+    extendedSet = []
+    agenda = [[start]]
+    
+    while len(agenda) > 0:
+        curPath = agenda.pop(0) #start from the front
+
+        if (curPath[-1] == goal): #if this path terminates at goal
+                return curPath
+        else:
+            for n in graph.get_connected_nodes(curPath[-1]): #for every node the last node connects to,
+                if (not n in extendedSet):
+                    if (not n in curPath): #no biting our own tail
+                        extendedSet.append(n) #add the node to the extended set
+                        p = copy.copy(curPath)
+                        p.append(n) #make a new path, the current path + the latest node
+                        agenda.append(p) #add this path to end of agenda
+
+            #sort entire path by distance travelled so far and the heurisitc
+            agenda = sorted(agenda, key=lambda path : path_length(graph, path) + graph.get_heuristic(path[-1], goal))
 
 
 ## It's useful to determine if a graph has a consistent and admissible
