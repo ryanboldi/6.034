@@ -239,8 +239,6 @@ def is_consistent(graph, goal):
     # edge length must be greater than or equal to the absolute 
     # value of the difference between the two heuristic values 
     # of its nodes
-
-
     consistent = True
     for e in graph.edges:
         accLength = e.length
@@ -253,6 +251,6 @@ def is_consistent(graph, goal):
             consistent = False
     return consistent
 
-HOW_MANY_HOURS_THIS_PSET_TOOK = ''
-WHAT_I_FOUND_INTERESTING = ''
-WHAT_I_FOUND_BORING = ''
+HOW_MANY_HOURS_THIS_PSET_TOOK = '2'
+WHAT_I_FOUND_INTERESTING = 'Implementing all of the search techniques'
+WHAT_I_FOUND_BORING = 'the admissable and consistent heuristics'
