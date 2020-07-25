@@ -235,7 +235,23 @@ def is_admissible(graph, goal):
 
 
 def is_consistent(graph, goal):
-    raise NotImplementedError
+    #for each edge in the graph 
+    # edge length must be greater than or equal to the absolute 
+    # value of the difference between the two heuristic values 
+    # of its nodes
+
+
+    consistent = True
+    for e in graph.edges:
+        accLength = e.length
+        h1 = graph.get_heuristic(e.node1, goal)
+        h2 = graph.get_heuristic(e.node2, goal)
+
+        diff = abs(h1 - h2)
+
+        if diff > accLength:
+            consistent = False
+    return consistent
 
 HOW_MANY_HOURS_THIS_PSET_TOOK = ''
 WHAT_I_FOUND_INTERESTING = ''
