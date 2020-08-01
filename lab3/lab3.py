@@ -91,7 +91,57 @@ def alpha_beta_search(board, depth,
                       # for connect_four.
                       get_next_moves_fn=get_all_next_moves,
 		      is_terminal_fn=is_terminal):
-    raise NotImplementedError
+    #if state is an end state or depth == 0, just return it's static value.
+    # value = -inf
+    #for all the states possible from here
+    #   the v is max(v, -1 * alpha_beta_search(state, depth-1)) 
+    #return v
+
+    best_val = None
+    
+    for move, new_board in get_next_moves_fn(board):
+        val = -1 * alpha_beta_get_board_value(new_board, depth-1, eval_fn,
+                                            get_next_moves_fn,
+                                            is_terminal_fn)
+        if best_val == None or val > best_val[0]:
+            best_val = (val, move, new_board)
+    return best_val[1]
+
+
+def alpha_beta_get_board_value(board, depth,
+                      eval_fn,
+                      # NOTE: You should use get_next_moves_fn when generating
+                      # next board configurations, and is_terminal_fn when
+                      # checking game termination.
+                      # The default functions set here will work
+                      # for connect_four.
+                      get_next_moves_fn=get_all_next_moves,
+		      is_terminal_fn=is_terminal,
+              alpha = NEG_INFINITY,
+              beta = INFINITY):
+    #if state is an end state or depth == 0, just return it's static value.
+    # value = -inf
+    #for all the states possible from here
+    #   the v is max(v, -1 * alpha_beta_search(state, depth-1)) 
+    #return v
+
+    if is_terminal_fn(depth, board):
+        return eval_fn(board)
+    
+    newalpha = -1 * beta
+    newbeta = -1 * alpha
+    value = -INFINITY
+
+    for move, new_board in get_next_moves_fn(board):
+        value =  max(value, -1 * alpha_beta_get_board_value(new_board, depth-1, eval_fn,
+                                            get_next_moves_fn,
+                                            is_terminal_fn, newalpha, newbeta))
+
+        newalpha = max(newalpha, value)
+        if newalpha >= newbeta:
+            return newalpha
+    return value
+
 
 ## Now you should be able to search twice as deep in the same amount of time.
 ## (Of course, this alpha-beta-player won't work until you've defined
