@@ -58,12 +58,21 @@ def focused_evaluate(board):
     a return value <= -1000 means that the current player has lost
     """    
 
+    #how many pieces on the board to determine how long the game has been going on
+    turns = board.num_tokens_on_board()
+
+    #we want to penalize for winning positions that have more tokens on board
+    if turns >= 0:
+        scoreAugment = 1/turns
+    else:
+        scoreAugment = 0 #this doesnt matter as there will never be a winning board on the first turn
+
     #first, we check if the current player has won
     if ((not board.is_win() == 0) and board.is_win() == board.get_current_player_id()):
-        return 1000
+        return 1000 + scoreAugment #win quicker
     #if the current player has lost
     elif ((not board.is_win() == 0)  and board.is_win() == board.get_other_player_id()):
-        return -1000
+        return -1000 - scoreAugment #lose more slowly
     #any other outcome
     else:
         return 0
@@ -156,7 +165,8 @@ ab_iterative_player = lambda board: \
     run_search_function(board,
                         search_fn=alpha_beta_search,
                         eval_fn=focused_evaluate, timeout=5)
-#run_game(human_player, alphabeta_player)
+
+#run_game(human_player, ab_iterative_player)
 
 ## Finally, come up with a better evaluation function than focused-evaluate.
 ## By providing a different function, you should be able to beat
@@ -164,7 +174,15 @@ ab_iterative_player = lambda board: \
 ## same depth.
 
 def better_evaluate(board):
-    raise NotImplementedError
+        #first, we check if the current player has won
+    if ((not board.is_win() == 0) and board.is_win() == board.get_current_player_id()):
+        return 1000
+    #if the current player has lost
+    elif ((not board.is_win() == 0)  and board.is_win() == board.get_other_player_id()):
+        return -1000
+    #any other outcome
+    else:
+        return 0
 
 # Comment this line after you've fully implemented better_evaluate
 better_evaluate = memoize(basic_evaluate)
