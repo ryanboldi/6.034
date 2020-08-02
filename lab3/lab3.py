@@ -62,7 +62,7 @@ def focused_evaluate(board):
     turns = board.num_tokens_on_board()
 
     #we want to penalize for winning positions that have more tokens on board
-    if turns >= 0:
+    if turns > 0:
         scoreAugment = 1/turns
     else:
         scoreAugment = 0 #this doesnt matter as there will never be a winning board on the first turn
@@ -174,12 +174,22 @@ ab_iterative_player = lambda board: \
 ## same depth.
 
 def better_evaluate(board):
-        #first, we check if the current player has won
+    #how many pieces on the board to determine how long the game has been going on
+    turns = board.num_tokens_on_board()
+
+    #we want to penalize for winning positions that have more tokens on board
+    if turns > 0:
+        scoreAugment = 1/turns
+    else:
+        scoreAugment = 0 #this doesnt matter as there will never be a winning board on the first turn
+
+    #first, we check if the current player has won
     if ((not board.is_win() == 0) and board.is_win() == board.get_current_player_id()):
-        return 1000
+        return 1000 + scoreAugment #win quicker
+
     #if the current player has lost
     elif ((not board.is_win() == 0)  and board.is_win() == board.get_other_player_id()):
-        return -1000
+        return -1000 - scoreAugment #lose more slowly
     #any other outcome
     else:
         return 0
