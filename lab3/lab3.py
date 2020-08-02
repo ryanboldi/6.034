@@ -177,6 +177,9 @@ def better_evaluate(board):
     #how many pieces on the board to determine how long the game has been going on
     turns = board.num_tokens_on_board()
 
+    me = board.get_current_player_id()
+    op = board.get_other_player_id()
+
     #we want to penalize for winning positions that have more tokens on board
     if turns > 0:
         scoreAugment = 1/turns
@@ -184,21 +187,45 @@ def better_evaluate(board):
         scoreAugment = 0 #this doesnt matter as there will never be a winning board on the first turn
 
     #first, we check if the current player has won
-    if ((not board.is_win() == 0) and board.is_win() == board.get_current_player_id()):
+    if ((not board.is_win() == 0) and board.is_win() == me):
         return 1000 + scoreAugment #win quicker
 
     #if the current player has lost
-    elif ((not board.is_win() == 0)  and board.is_win() == board.get_other_player_id()):
+    elif ((not board.is_win() == 0)  and board.is_win() == op):
         return -1000 - scoreAugment #lose more slowly
     #any other outcome
     else:
-        return 0
+        score = 0
+        #now, we also want to give you a better score if there is more tokens in a row, and less of your opponents tokens in a row
+        myLongest = board.longest_chain(me)
+        opLongest = board.longest_chain(op)
+
+        score += myLongest*10
+        score -= opLongest*10 # will be negative if the opponent has longer longest chain
+
+        #we also want a minor help for the length of ALL the chains
+        myChains = board.chain_cells(me)
+        opChains = board.chain_cells(op)
+
+        myTot = 0
+        opTot = 0
+
+        for chain in myChains:
+            myTot += len(chain)
+
+        for chain in opChains:
+            opTot += len(chain)
+
+        score += myTot
+        score -= opTot
+
+        return score
 
 # Comment this line after you've fully implemented better_evaluate
-better_evaluate = memoize(basic_evaluate)
+#better_evaluate = memoize(basic_evaluate)
 
 # Uncomment this line to make your better_evaluate run faster.
-# better_evaluate = memoize(better_evaluate)
+better_evaluate = memoize(better_evaluate)
 
 # For debugging: Change this if-guard to True, to unit-test
 # your better_evaluate function.
@@ -256,12 +283,12 @@ def run_test_tree_search(search, board, depth):
 ## Do you want us to use your code in a tournament against other students? See
 ## the description in the problem set. The tournament is completely optional
 ## and has no effect on your grade.
-COMPETE = (None)
+COMPETE = (True)
 
 ## The standard survey questions.
-HOW_MANY_HOURS_THIS_PSET_TOOK = ""
-WHAT_I_FOUND_INTERESTING = ""
-WHAT_I_FOUND_BORING = ""
-NAME = ""
-EMAIL = ""
+HOW_MANY_HOURS_THIS_PSET_TOOK = "2.5"
+WHAT_I_FOUND_INTERESTING = "Alpha beta, watching two computers play the game against each other, optimizing an evaluation function"
+WHAT_I_FOUND_BORING = "N/A"
+NAME = "Ryan Boldi"
+EMAIL = "Ryan.boldi123@gmail.com"
 
